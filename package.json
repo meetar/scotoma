@@ -1,0 +1,16 @@
+{
+  "name": "scotoma",
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite"
+  },
+  "dependencies": {
+    "d3-contour": "^4.0.1",
+    "delaunator": "^5.0.0",
+    "lil-gui": "^0.21.0"
+  },
+  "devDependencies": {
+    "vite": "^5.0.0"
+  }
+}

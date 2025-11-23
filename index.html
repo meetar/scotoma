@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>scintillating scotoma</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background: #1a1a1a;
+            font-family: monospace;
+            font-size: 12px;
+            color: #fff;
+        }
+        #title {
+            font-size: 12px;
+            width: 600px;
+            text-align: left;
+        }
+        #container {
+            text-align: center;
+            position: relative;
+            width: 600px;
+            height: 600px;
+            margin: 20px;
+        }
+        canvas {
+            display: inline-block;
+            box-sizing: border-box;
+            position: absolute;
+            top: 0;
+            left: 0;
+            z-index: 1;
+            mix-blend-mode: plus-lighter;
+            opacity: .8;
+        }
+        .photo {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 600px;
+            height: 600px;
+            object-fit: cover;
+            pointer-events: none;
+            transition: opacity 0.5s ease-in-out;
+            opacity: 0;
+            z-index: 0;
+        }
+        .photo.active {
+            opacity: 1;
+        }
+        .nav-button {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(0, 0, 0, 0.5);
+            color: white;
+            border: none;
+            width: 40px;
+            height: 40px;
+            font-size: 20px;
+            cursor: pointer;
+            z-index: 2;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            transition: background 0.2s;
+        }
+        .nav-button:hover {
+            background: rgba(0, 0, 0, 0.7);
+        }
+        #nav-button-left {
+            left: 10px;
+        }
+        #nav-button-right {
+            right: 10px;
+        }
+        #caption {
+            width: 600px;
+            line-height: 1.7em;
+        }
+        .webgl-error {
+            width: 600px;
+            height: 300px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+    </style>
+</head>
+<body>
+    <div id="title">Scintillating scotoma</div>
+    <div id="container">
+        <canvas id="canvas" width="600" height="600"></canvas>
+        <button id="nav-button-left" class="nav-button">‹</button>
+        <button id="nav-button-right" class="nav-button">›</button>
+    </div>
+    <div id="caption">Shape distortions at 200x speed.</div>
+
+    <script type="module" src="./main.js"></script>
+    <script>
+        const photos = {
+            'mountain landscape': 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=600&h=600&fit=crop',
+            'reading a book': 'https://images.unsplash.com/photo-1591224792832-7751d3f0ce14??w=600&h=600&fit=crop',
+            'driving on a highway': 'https://images.unsplash.com/photo-1521410843026-323be9ead002?w=600&h=600&fit=crop',
+        };
+        
+        const photoKeys = Object.keys(photos);
+        let currentPhotoIndex = 0;
+        const container = document.getElementById('container');
+        const leftButton = document.getElementById('nav-button-left');
+        const rightButton = document.getElementById('nav-button-right');
+        const photoElements = [];
+        
+        // create and load all photo elements
+        photoKeys.forEach((alt, index) => {
+            const img = document.createElement('img');
+            img.className = 'photo';
+            img.src = photos[alt];
+            img.alt = alt;
+            container.appendChild(img);
+            photoElements.push(img);
+        });
+        
+        // show first photo
+        photoElements[0].classList.add('active');
+        
+        function changePhoto(direction) {
+            
+            let nextIndex;
+            if (direction === 'next') {
+                nextIndex = (currentPhotoIndex + 1) % photoKeys.length;
+            } else {
+                nextIndex = (currentPhotoIndex - 1 + photoKeys.length) % photoKeys.length;
+            }
+            
+            const currentPhoto = photoElements[currentPhotoIndex];
+            const nextPhoto = photoElements[nextIndex];
+            
+            // fade out current photo
+            currentPhoto.classList.remove('active');
+            
+            // wait for fade out to complete
+            setTimeout(() => {
+                // fade in next photo
+                nextPhoto.classList.add('active');
+                currentPhotoIndex = nextIndex;
+            }, 500); // wait for fade out transition to complete
+        }
+        
+        leftButton.addEventListener('click', () => changePhoto('prev'));
+        rightButton.addEventListener('click', () => changePhoto('next'));
+    </script>
+</body>
+</html>
